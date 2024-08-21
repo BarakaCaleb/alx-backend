@@ -13,13 +13,24 @@ Create a class BasicCache that inherits from BaseCaching and is a caching system
         If key is None or if the key doesn’t exist in self.cache_data, return None.
 """
 
+BaseCaching = __import__('base_caching').BaseCaching
+
 # Import Basecaching class from base_caching module
 from base_caching import BaseCaching
+
+
+
+
 
 class BasicCache(BaseCaching):
     """
     BasicCache class inherits from BaseCaching
     This caching system has no limits """
+
+    def __init__(self):
+        """_summary_
+        """
+        super().__init__()
 
     def put(self, key,item):
         """
