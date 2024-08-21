@@ -1,42 +1,39 @@
 #!/usr/bin/env python3
-
 # Importing the BaseCaching class from the base_caching module
-BaseCaching = __import__('base_caching').BaseCaching
-
+from base_caching import BaseCaching
 
 class FIFOCache(BaseCaching):
-    """_summary_
+    """ FIFOCache class that inherits from BaseCaching
+        Implements a caching system with FIFO (First-In-First-Out) strategy
     """
 
     def __init__(self):
-        """_summary_
-        """
-        super().__init__()
+        """ Initialize the class """
+        super().__init__()  # Call the parent class's init method
+        self.queue = []  # To keep track of the order in which keys are added
 
     def put(self, key, item):
-        """_summary_
-
-        Args:
-                        key (_type_): _description_
-                        item (_type_): _description_
+        """ Add an item in the cache
+            If key or item is None, do nothing
         """
         if key is None or item is None:
-            pass
-        else:
-            if len(self.cache_data) >= BaseCaching.MAX_ITEMS \
-                    and key not in self.cache_data.keys():
-                first_key = next(iter(self.cache_data.keys()))
-                del self.cache_data[first_key]
-                print("DISCARD: {}". format(first_key))
+            return
 
-            self.cache_data[key] = item
+        # If key already exists, remove it from the queue to update its position
+        if key in self.cache_data:
+            self.queue.remove(key)
+        # Add the new key to the queue and the cache
+        self.cache_data[key] = item
+        self.queue.append(key)
+
+        # If the cache exceeds MAX_ITEMS, remove the first item added (FIFO)
+        if len(self.cache_data) > BaseCaching.MAX_ITEMS:
+            first_key = self.queue.pop(0)  # The first item inserted
+            del self.cache_data[first_key]
+            print(f"DISCARD: {first_key}")
 
     def get(self, key):
-        """return the value in self.cache_data linked to key
-
-        Args:
-                        key (_type_): _description_
+        """ Get an item by key
+            If key is None or doesn't exist, return None
         """
-        if key is None or key not in self.cache_data.keys():
-            return None
-        return self.cache_data.get(key)
+        return self.cache_data.get(key, None)
